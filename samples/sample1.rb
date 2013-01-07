@@ -2,25 +2,30 @@
 require 'rubygems'
 require 'hondana'
 
-h = Hondana.new
-shelfnames = h.shelfnames('4163733507')
-shelfnames.each { |shelfname|
-  puts shelfname
-  isbns = h.isbns(shelfname)
-  puts isbns.join(", ")
-}
+include Hondana
+
+book = Book.new('4167274027')
+shelf = Shelf.new('増井')
+entry = Entry.new(shelf,book)
+puts entry.comment
 exit
 
-shelves = h.shelves('4163733507')
-shelves.each { |shelf|
-  puts "#{shelf.name} #{shelf.description}"
+shelf = Shelf.new('yuco')
+p shelf
+shelf.books.each { |book|
+  puts book.isbn
+  puts book.title
+  puts book.authors
+  puts book.publisher
 }
-exit
 
-books = h.books('yuco')
-books.each { |book|
-  puts "#{book.isbn} #{book.title}"
+book = Book.new('4163733507')
+book.shelves.each { |shelf|
+  puts shelf.name
+  puts shelf.url
+  puts shelf.description
 }
+
 
 
 

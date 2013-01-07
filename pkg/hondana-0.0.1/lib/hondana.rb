@@ -4,6 +4,7 @@
 #
 require 'net/http'
 require 'json'
+require 'cgi'
 
 $:.unshift(File.dirname(__FILE__)) unless
   $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
@@ -42,7 +43,7 @@ class Hondana
 
   class Shelf
     def initialize(name)
-      data = JSON.parse(Hondana.http_get("/shelfinfo?shelf=#{name}"))
+      data = JSON.parse(Hondana.http_get("/shelfinfo?shelf=#{CGI.escape(name)}"))
       @name = name
       @url = data['url']
       @description = data['description']
@@ -55,7 +56,7 @@ class Hondana
   def initialize
   end
 
-  def isbns(shelf='',pattern='')
+  def Hondana.books(shelf='',pattern='')
     if shelf == '' && pattern == ''
       JSON.parse(Hondana.http_get("/books"))
     elsif pattern == ''
@@ -67,13 +68,17 @@ class Hondana
     end
   end
 
-  def books(shelf='',pattern='')
+  def Hondana.book(isbn)
+    Book.new(isbn)
+  end
+
+  def __books(shelf='',pattern='')
     isbns(shelf,pattern).collect { |isbn|
       Book.new(isbn)
     }
   end
 
-  def shelfnames(isbn='',pattern='')
+  def Hondana.shelves(isbn='',pattern='')
     if isbn == '' && pattern == ''
       JSON.parse(Hondana.http_get("/shelves"))
     elsif pattern == ''
@@ -85,7 +90,11 @@ class Hondana
     end
   end
 
-  def shelves(isbn='',pattern='')
+  def Hondana.shelf(name)
+    Shelf.new(name)
+  end
+
+  def __shelves(isbn='',pattern='')
     shelfnames(isbn,pattern).collect { |name|
       Shelf.new(name)
     }

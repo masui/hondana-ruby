@@ -4,12 +4,13 @@
 #
 require 'net/http'
 require 'json'
+require 'cgi'
 
 $:.unshift(File.dirname(__FILE__)) unless
   $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
 
-class Hondana
-  VERSION = '0.0.1'
+module Hondana
+  VERSION = '0.1.1'
 
   def Hondana.http_get(addr)
     ret = nil
@@ -28,66 +29,124 @@ class Hondana
 
   class Book
     def initialize(isbn)
-      data = JSON.parse(Hondana.http_get("/bookinfo?isbn=#{isbn}"))
       @isbn = isbn
+      @title = nil
+      @authors = nil
+      @publisher = nil
+    end
+    attr_reader :isbn
+
+    def getdata
+      data = JSON.parse(Hondana.http_get("/bookinfo?isbn=#{CGI.escape(isbn)}"))
       @title = data['title']
       @authors = data['authors']
       @publisher = data['publisher']
     end
-    attr_reader :title
-    attr_reader :isbn
-    attr_reader :authors
-    attr_reader :publisher
+
+    def title
+      getdata unless @title
+      @title
+    end
+
+    def authors
+      getdata unless @authors
+      @authors
+    end
+
+    def publisher
+      getdata unless @publisher
+      @publisher
+    end
+
+    def shelves
+      shelfnames = JSON.parse(Hondana.http_get("/shelves?isbn=#{isbn}"))
+      shelfnames.collect { |name|
+        Shelf.new(name)
+      }
+    end
   end
 
   class Shelf
     def initialize(name)
-      data = JSON.parse(Hondana.http_get("/shelfinfo?shelf=#{name}"))
       @name = name
+      @url = nil
+      @description = nil
+    end
+    attr_reader :name
+
+    def getdata
+      data = JSON.parse(Hondana.http_get("/shelfinfo?shelf=#{CGI.escape(name)}"))
       @url = data['url']
       @description = data['description']
     end
-    attr_reader :name
-    attr_reader :description
-    attr_reader :url
-  end
 
-  def initialize
-  end
+    def url
+      getdata unless @url
+      @url
+    end
 
-  def isbns(shelf='',pattern='')
-    if shelf == '' && pattern == ''
-      JSON.parse(Hondana.http_get("/books"))
-    elsif pattern == ''
-      JSON.parse(Hondana.http_get("/books?shelf=#{shelf}"))
-    elsif shelf == ''
-      JSON.parse(Hondana.http_get("/books?pattern=#{pattern}"))
-    else
-      JSON.parse(Hondana.http_get("/books?pattern=#{shelf},#{pattern}"))
+    def description
+      getdata unless @description
+      @description
+    end
+
+    def books
+      isbns = JSON.parse(Hondana.http_get("/books?shelf=#{@name}"))
+      isbns.collect { |isbn|
+        Book.new(isbn)
+      }
     end
   end
 
-  def books(shelf='',pattern='')
-    isbns(shelf,pattern).collect { |isbn|
+  class Entry
+    def initialize(shelf,book)
+      @shelf = shelf
+      if shelf.class == String
+        @shelf = Shelf.new(shelf)
+      end
+      @book = book
+      if book.class == String
+        @book = Book.new(book)
+      end
+      @comment = nil
+      @score = nil
+      @categories = nil
+
+      data = JSON.parse(Hondana.http_get("/entry?shelf=#{@shelf.name}&isbn=#{@book.isbn}"))
+      @comment = data['comment']
+      @score = data['score']
+      @categories = data['categories']
+    end
+    attr_reader :shelf
+    attr_reader :book
+    attr_reader :comment
+    attr_reader :categories
+    attr_reader :score
+
+  end
+
+  def Hondana.books(pattern=nil)
+    isbns = 
+      if pattern
+        JSON.parse(Hondana.http_get("/books?pattern=#{pattern}"))
+      else
+        JSON.parse(Hondana.http_get("/books"))
+      end
+    isbns.collect { |isbn|
       Book.new(isbn)
     }
   end
 
-  def shelfnames(isbn='',pattern='')
-    if isbn == '' && pattern == ''
-      JSON.parse(Hondana.http_get("/shelves"))
-    elsif pattern == ''
-      JSON.parse(Hondana.http_get("/shelves?isbn=#{isbn}"))
-    elsif isbn == ''
-      JSON.parse(Hondana.http_get("/shelves?pattern=#{pattern}"))
-    else
-      JSON.parse(Hondana.http_get("/shelves?pattern=#{isbn},#{pattern}"))
-    end
-  end
-
-  def shelves(isbn='',pattern='')
-    shelfnames(isbn,pattern).collect { |name|
+  def Hondana.shelves(pattern=nil)
+    shelves = 
+      if pattern
+        JSON.parse(Hondana.http_get("/shelves?pattern=#{pattern}"))
+      else
+        JSON.parse(Hondana.http_get("/shelves"))
+      end
+    shelves.collect { |name|
       Shelf.new(name)
     }
   end
 end
+

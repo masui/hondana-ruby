@@ -1,6 +1,6 @@
 = hondana
 
-* http://github.com/#{github_username}/#{project_name}
+* http://github.com/masui/ruby-hondana
 
 == DESCRIPTION:
 
@@ -8,11 +8,11 @@ API for hondana.org
 
 == FEATURES/PROBLEMS:
 
-* FIX (list of features or problems)
+Access hondana.org DB from Ruby
 
 == SYNOPSIS:
 
-  FIX (code sample of usage)
+  require "hondana"
 
 == REQUIREMENTS:
 
@@ -20,13 +20,13 @@ API for hondana.org
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+* sudo gem install hondana
 
 == LICENSE:
 
 (The MIT License)
 
-Copyright (c) 2013 FIXME full name
+Copyright (c) 2013 Toshiyuki Masui @ pitecan.com
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
