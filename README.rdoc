@@ -13,6 +13,12 @@ Access hondana.org DB from Ruby
 == SYNOPSIS:
 
   require "hondana"
+  include Hondana
+  shelf = Shelf.new('増井')
+  shelf.books.each { |book|
+    puts book.isbn
+    puts book.title
+  }
 
 == REQUIREMENTS:
 
