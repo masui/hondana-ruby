@@ -2,33 +2,12 @@
 require 'rubygems'
 require 'hondana'
 
-# include Hondana
+include Hondana
 
-#book = Book.new('4167274027')
-#shelf = Shelf.new('増井')
-#entry = Entry.new(shelf,book)
-entry = Hondana::Entry.new('増井','4167274027')
-puts entry.comment
-puts entry.shelf
-exit
+# ISBNが4167274027の本の情報を得る
 
-shelf = Shelf.new('yuco')
-p shelf
-shelf.books.each { |book|
-  puts book.isbn
-  puts book.title
-  puts book.authors
-  puts book.publisher
-}
-
-book = Book.new('4163733507')
-book.shelves.each { |shelf|
-  puts shelf.name
-  puts shelf.url
-  puts shelf.description
-}
-
-
-
-
+book = Book.new('4167274027')
+puts book.title
+puts book.authors
+puts book.publisher
 

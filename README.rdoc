@@ -13,6 +13,8 @@ Access hondana.org DB from Ruby
 
 == SYNOPSIS:
 
+See samples/*.rb
+
   require "hondana"
   include Hondana
   shelf = Shelf.new('増井')
