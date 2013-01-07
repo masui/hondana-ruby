@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 = hondana
 
 * http://github.com/masui/ruby-hondana
@@ -22,7 +23,9 @@ Access hondana.org DB from Ruby
 
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+* json
+* net/http
+* cgi
 
 == INSTALL:
 
