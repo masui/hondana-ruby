@@ -2,24 +2,23 @@
 require File.dirname(__FILE__) + '/test_helper.rb'
 
 class TestHondana < Test::Unit::TestCase
-  include Hondana
 
   def setup
   end
   
   def test_book
-    book = Book.new('4102113010')
+    book = Hondana::Book.new('4102113010')
     assert book.title.class == String
     assert book.title =~ /赤毛のアン/
   end
 
   def test_shelf
-    shelf = Shelf.new('yuco')
+    shelf = Hondana::Shelf.new('yuco')
     assert shelf.name.class == String
   end
 
   def test_2
-    shelf = Shelf.new('yuco')
+    shelf = Hondana::Shelf.new('yuco')
     isbns = shelf.books.collect { |book|
       book.isbn
     }

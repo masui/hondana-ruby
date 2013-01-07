@@ -2,12 +2,14 @@
 require 'rubygems'
 require 'hondana'
 
-include Hondana
+# include Hondana
 
-book = Book.new('4167274027')
-shelf = Shelf.new('増井')
-entry = Entry.new(shelf,book)
+#book = Book.new('4167274027')
+#shelf = Shelf.new('増井')
+#entry = Entry.new(shelf,book)
+entry = Hondana::Entry.new('増井','4167274027')
 puts entry.comment
+puts entry.shelf
 exit
 
 shelf = Shelf.new('yuco')
